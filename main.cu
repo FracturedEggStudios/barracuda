@@ -1,4 +1,3 @@
-
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
@@ -7,18 +6,16 @@
 
 cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size);
 
-__global__ void addKernel(int *c, const int *a, const int *b)
-{
+__global__ void addKernel(int *c, const int *a, const int *b) {
     int i = threadIdx.x;
     c[i] = a[i] + b[i];
 }
 
-int main()
-{
+int main() {
     const int arraySize = 5;
-    const int a[arraySize] = { 1, 2, 3, 4, 5 };
-    const int b[arraySize] = { 10, 20, 30, 40, 50 };
-    int c[arraySize] = { 0 };
+    const int a[arraySize] = {1, 2, 3, 4, 5};
+    const int b[arraySize] = {10, 20, 30, 40, 50};
+    int c[arraySize] = {0};
 
     // Add vectors in parallel.
     cudaError_t cudaStatus = addWithCuda(c, a, b, arraySize);
@@ -42,8 +39,7 @@ int main()
 }
 
 // Helper function for using CUDA to add vectors in parallel.
-cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size)
-{
+cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size) {
     int *dev_a = 0;
     int *dev_b = 0;
     int *dev_c = 0;
@@ -57,19 +53,19 @@ cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size)
     }
 
     // Allocate GPU buffers for three vectors (two input, one output)    .
-    cudaStatus = cudaMalloc((void**)&dev_c, size * sizeof(int));
+    cudaStatus = cudaMalloc((void **) &dev_c, size * sizeof(int));
     if (cudaStatus != cudaSuccess) {
         std::cerr << "cudaMalloc failed!" << std::endl;
         goto Error;
     }
 
-    cudaStatus = cudaMalloc((void**)&dev_a, size * sizeof(int));
+    cudaStatus = cudaMalloc((void **) &dev_a, size * sizeof(int));
     if (cudaStatus != cudaSuccess) {
         std::cerr << "cudaMalloc failed!" << std::endl;
         goto Error;
     }
 
-    cudaStatus = cudaMalloc((void**)&dev_b, size * sizeof(int));
+    cudaStatus = cudaMalloc((void **) &dev_b, size * sizeof(int));
     if (cudaStatus != cudaSuccess) {
         std::cerr << "cudaMalloc failed!" << std::endl;
         goto Error;
@@ -102,7 +98,8 @@ cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size)
     // any errors encountered during the launch.
     cudaStatus = cudaDeviceSynchronize();
     if (cudaStatus != cudaSuccess) {
-        std::cerr << "cudaDeviceSynchronize returned error code " << std::to_string(cudaStatus) << "after launching addKernel!" << std::endl;
+//        std::cerr << "cudaDeviceSynchronize returned error code " << std::to_string(cudaStatus) << "after launching addKernel!" << std::endl;
+        fprintf(stderr, "cudaDeviceSynchronize returned error code %d after launching addKernel!", cudaStatus);
         goto Error;
     }
 
